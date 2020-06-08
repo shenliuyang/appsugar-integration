@@ -10,17 +10,18 @@ import reactor.netty.http.server.HttpServer;
 
 /**
  * 平台执行器配置
- * Netty:NettyPlatformXECUTOR
- * Undertow:UndertowPlatformExecutor
- * Tomcat:UnconfinedPlatformExecutor
+ * Netty:NettyExecutor
+ * Undertow:UndertowExecutor
+ * Tomcat:UnconfinedExecutor
  */
+@ConditionalOnClass(ContinuationScope.class)
 @Configuration(proxyBeanMethods = false)
 public class ExecutorConfiguration {
 
     @ConditionalOnMissingBean
     @Bean
     public ExecutorProvider unconfinedPlatformExecutorProvider() {
-        return new UnconfinedExecutor.UncondfinedPlatformExecutorProvider();
+        return new UnconfinedExecutor.UncondfinedExecutorProvider();
     }
 
     /**

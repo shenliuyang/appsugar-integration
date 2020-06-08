@@ -11,8 +11,13 @@ public class UnconfinedExecutor implements Executor {
         command.run();
     }
 
-    public static class UncondfinedPlatformExecutorProvider implements ExecutorProvider {
+    public static class UncondfinedExecutorProvider implements ExecutorProvider {
         private static UnconfinedExecutor executor = new UnconfinedExecutor();
+
+        @Override
+        public boolean useDefaultDispatcher() {
+            return true;
+        }
 
         @Override
         public Executor getOrCreateCurrentExecutor() {

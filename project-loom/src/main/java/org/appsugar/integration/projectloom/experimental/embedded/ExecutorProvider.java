@@ -35,6 +35,13 @@ public interface ExecutorProvider {
      */
     Executor getOrCreateCurrentExecutor();
 
+    /**
+     * 是否采用系统转发器
+     */
+    default boolean useDefaultDispatcher() {
+        return false;
+    }
+
 }
 
 class ExecutorVariables {

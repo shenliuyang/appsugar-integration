@@ -35,15 +35,13 @@ public class VirtualThreadWebFilter implements WebFilter {
         String parentThreadName = Thread.currentThread().getName();
         return Mono.create(sink -> {
             Thread.Builder builder = Thread.builder().name("VirtualThread-" + parentThreadName).inheritThreadLocals();
-            if (Objects.nonNull(executor)) {
+            if (Objects.nonNull(executor) && !platformExecutorProvider.useDefaultDispatcher()) {
                 builder.virtual(executor);
             } else {
                 builder.virtual();
             }
             builder.task(() -> {
-                ExecutorProvider.setCurrentExecutor(executor);
                 chain.filter(exchange).subscriberContext(sink.currentContext()).subscribe(r -> sink.success(r), (r) -> sink.error(r));
-                ExecutorProvider.removeCurrentExecutor();
             });
             Thread fiber = builder.build();
             fiber.start();
