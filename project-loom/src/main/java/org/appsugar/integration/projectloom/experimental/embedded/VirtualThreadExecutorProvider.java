@@ -3,10 +3,10 @@ package org.appsugar.integration.projectloom.experimental.embedded;
 import java.util.concurrent.Executor;
 
 /**
- * 平台化执行器
+ * 平台化轻量级线程执行提供者
  * Netty,UnderTow,Tomcat
  */
-public interface ExecutorProvider {
+public interface VirtualThreadExecutorProvider {
     /**
      * 获取当前线程下的执行器,如果未设置,返回null
      */
@@ -35,12 +35,6 @@ public interface ExecutorProvider {
      */
     Executor getOrCreateCurrentExecutor();
 
-    /**
-     * 是否采用系统转发器
-     */
-    default boolean useDefaultDispatcher() {
-        return false;
-    }
 
 }
 

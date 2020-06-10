@@ -14,16 +14,16 @@ import java.util.concurrent.Executor;
  * 提交任务时,如果是当前eventLoop那么直接执行.
  * 减少把任务入队列的操作提高性能.
  */
-public class NettyExecutor implements Executor {
-    private static final Logger logger = LoggerFactory.getLogger(NettyExecutor.class);
-    private static final FastThreadLocal<NettyExecutor> mappings = new FastThreadLocal<>();
+public class VirtualThreadNettyExecutor implements Executor {
+    private static final Logger logger = LoggerFactory.getLogger(VirtualThreadNettyExecutor.class);
+    private static final FastThreadLocal<VirtualThreadNettyExecutor> mappings = new FastThreadLocal<>();
 
     /**
      * 获取当前线程绑定的netty event loop(如果当前线程非 eventLoop 返回空)
      * 其它线程要想获取必需先设置 NettyWithoutEnqueuEventExecutor.setCurrentExecutor 关闭时remove
      */
-    public static NettyExecutor currentExecutor() {
-        NettyExecutor current = mappings.get();
+    public static VirtualThreadNettyExecutor currentExecutor() {
+        VirtualThreadNettyExecutor current = mappings.get();
         if (Objects.nonNull(current)) {
             return current;
         }
@@ -31,7 +31,7 @@ public class NettyExecutor implements Executor {
         if (Objects.isNull(ee)) {
             return null;
         }
-        current = new NettyExecutor(ee);
+        current = new VirtualThreadNettyExecutor(ee);
         mappings.set(current);
         return current;
     }
@@ -41,8 +41,8 @@ public class NettyExecutor implements Executor {
      *
      * @param executor
      */
-    public static void setCurrentExecutor(NettyExecutor executor) {
-        NettyExecutor nee = currentExecutor();
+    public static void setCurrentExecutor(VirtualThreadNettyExecutor executor) {
+        VirtualThreadNettyExecutor nee = currentExecutor();
         if (Objects.nonNull(nee) && nee.eventExecutor.inEventLoop() && executor.eventExecutor != nee.eventExecutor) {
             String msg = "Trying to bind another executor  to netty FastThreadLocalThread was forbidden ,current executor is " + nee.eventExecutor + " param executor is " + executor.eventExecutor;
             logger.error(msg);
@@ -52,7 +52,7 @@ public class NettyExecutor implements Executor {
     }
 
     public static void removeCurrentExecutor() {
-        NettyExecutor nee = currentExecutor();
+        VirtualThreadNettyExecutor nee = currentExecutor();
         if (Objects.nonNull(nee) && nee.eventExecutor.inEventLoop()) {
             String msg = "Current thread is netty event loop thread " + Thread.currentThread().getName() + " did not allowed to remove Executor ";
             logger.error(msg);
@@ -64,28 +64,25 @@ public class NettyExecutor implements Executor {
 
     protected EventExecutor eventExecutor;
 
-    public NettyExecutor(EventExecutor eventExecutor) {
+    public VirtualThreadNettyExecutor(EventExecutor eventExecutor) {
         this.eventExecutor = eventExecutor;
     }
 
     @Override
     public void execute(Runnable command) {
         EventExecutor executor = getEventExecutor();
-        if (executor.inEventLoop()) {
-            command.run();
-            return;
-        }
-        executor.execute(command);
+        Thread thread = VirtualThreadBuilder.buildVirtualThread(executor, command);
+        thread.start();
     }
 
     public EventExecutor getEventExecutor() {
         return this.eventExecutor;
     }
 
-    public static class NettyPlatformEventExecutorProvider implements ExecutorProvider {
+    public static class NettyPlatformEventExecutorProvider implements VirtualThreadExecutorProvider {
         @Override
         public Executor getOrCreateCurrentExecutor() {
-            return NettyExecutor.currentExecutor();
+            return VirtualThreadNettyExecutor.currentExecutor();
         }
     }
 

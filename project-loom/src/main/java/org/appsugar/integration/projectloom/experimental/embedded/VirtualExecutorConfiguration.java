@@ -1,12 +1,12 @@
 package org.appsugar.integration.projectloom.experimental.embedded;
 
+import io.netty.bootstrap.ServerBootstrap;
 import io.undertow.Undertow;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.xnio.SslClientAuthMode;
-import reactor.netty.http.server.HttpServer;
 
 /**
  * 平台执行器配置
@@ -16,23 +16,23 @@ import reactor.netty.http.server.HttpServer;
  */
 @ConditionalOnClass(ContinuationScope.class)
 @Configuration(proxyBeanMethods = false)
-public class ExecutorConfiguration {
+public class VirtualExecutorConfiguration {
 
     @ConditionalOnMissingBean
     @Bean
-    public ExecutorProvider unconfinedPlatformExecutorProvider() {
-        return new UnconfinedExecutor.UncondfinedExecutorProvider();
+    public VirtualThreadExecutorProvider unconfinedPlatformExecutorProvider() {
+        return new VirtualThreadDefaultExecutor.UncondfinedExecutorProvider();
     }
 
     /**
      * 配置netty
      */
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(HttpServer.class)
+    @ConditionalOnClass(ServerBootstrap.class)
     public static class NettyVirtualThreadWebFilterConfiguration {
         @Bean
-        public ExecutorProvider nettyPlatformExecutorProvider() {
-            return new NettyExecutor.NettyPlatformEventExecutorProvider();
+        public VirtualThreadExecutorProvider nettyPlatformExecutorProvider() {
+            return new VirtualThreadNettyExecutor.NettyPlatformEventExecutorProvider();
         }
     }
 
@@ -40,8 +40,8 @@ public class ExecutorConfiguration {
     @ConditionalOnClass({Undertow.class, SslClientAuthMode.class})
     public static class UndertowVirtualThreadWebFilterConfiguration {
         @Bean
-        public ExecutorProvider undertowPlatofrExecutorProvider() {
-            return new UndertowExecutorProvider();
+        public VirtualThreadExecutorProvider undertowPlatofrExecutorProvider() {
+            return new VirtualUndertowExecutorProvider();
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.appsugar.integration.projectloom.experimental.spring.webflux;
 
-import org.appsugar.integration.projectloom.experimental.embedded.ExecutorProvider;
+import org.appsugar.integration.projectloom.experimental.embedded.VirtualThreadExecutorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +23,19 @@ public class VirtualThreadWebFilter implements WebFilter {
     private VirtualThreadServerProperties properties;
 
     @Autowired
-    private ExecutorProvider platformExecutorProvider;
+    private VirtualThreadExecutorProvider executorProvider;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        Executor executor = platformExecutorProvider.getOrCreateCurrentExecutor();
+        Executor executor = executorProvider.getOrCreateCurrentExecutor();
         if (properties.isStrict() && Objects.isNull(executor)) {
             return Mono.error(new RuntimeException("Current Thread " + Thread.currentThread().getName() + " get Platform Executor failed," +
                     "set server.strict=false to use System Executor instead of platform Executor"));
         }
         String parentThreadName = Thread.currentThread().getName();
         return Mono.create(sink -> {
-            Thread.Builder builder = Thread.builder().name("VirtualThread-" + parentThreadName).inheritThreadLocals();
-            if (Objects.nonNull(executor) && !platformExecutorProvider.useDefaultDispatcher()) {
-                builder.virtual(executor);
-            } else {
-                builder.virtual();
-            }
-            builder.task(() -> {
-                chain.filter(exchange).subscriberContext(sink.currentContext()).subscribe(r -> sink.success(r), (r) -> sink.error(r));
-            });
-            Thread fiber = builder.build();
-            fiber.start();
+            Runnable task = () -> chain.filter(exchange).subscriberContext(sink.currentContext()).subscribe(r -> sink.success(r), (r) -> sink.error(r));
+            executor.execute(task);
         });
     }
 }

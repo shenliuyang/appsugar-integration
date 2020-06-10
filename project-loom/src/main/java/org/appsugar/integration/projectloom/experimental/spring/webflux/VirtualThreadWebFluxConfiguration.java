@@ -1,7 +1,7 @@
 package org.appsugar.integration.projectloom.experimental.spring.webflux;
 
-import org.appsugar.integration.projectloom.experimental.embedded.ExecutorConfiguration;
-import org.appsugar.integration.projectloom.experimental.embedded.ExecutorProvider;
+import org.appsugar.integration.projectloom.experimental.embedded.VirtualExecutorConfiguration;
+import org.appsugar.integration.projectloom.experimental.embedded.VirtualThreadExecutorProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Import;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(VirtualThreadServerProperties.class)
 @ConditionalOnClass(ContinuationScope.class)
-@Import(ExecutorConfiguration.class)
+@Import(VirtualExecutorConfiguration.class)
 public class VirtualThreadWebFluxConfiguration {
 
-    @ConditionalOnBean(ExecutorProvider.class)
+    @ConditionalOnBean(VirtualThreadExecutorProvider.class)
     @Bean
     public VirtualThreadWebFilter nettyVirtualThreadWebFilter() {
         return new VirtualThreadWebFilter();

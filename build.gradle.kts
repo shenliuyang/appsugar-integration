@@ -2,7 +2,7 @@ plugins {
     val springBootVersion: String by System.getProperties()
     val releasePluginVersion: String by System.getProperties()
     id("net.researchgate.release") version releasePluginVersion
-    id("org.springframework.boot") version springBootVersion apply (false)
+    id("org.springframework.boot") version springBootVersion
     idea
     java
 }
@@ -37,7 +37,8 @@ allprojects {
         }
     }
     tasks {
-        getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") { enabled = false }
+        java { sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8 }
+        bootJar { enabled = false }
         test {
             failFast = true
             useJUnitPlatform()
