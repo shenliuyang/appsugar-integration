@@ -64,19 +64,35 @@ public class VirtualThreadNettyExecutor implements Executor {
 
     protected EventExecutor eventExecutor;
 
+    protected Executor fastExecutor;
+
     public VirtualThreadNettyExecutor(EventExecutor eventExecutor) {
         this.eventExecutor = eventExecutor;
+        this.fastExecutor = new Executor() {
+            @Override
+            public void execute(Runnable command) {
+                if (eventExecutor.inEventLoop()) {
+                    command.run();
+                } else {
+                    eventExecutor.execute(command);
+                }
+            }
+        };
     }
 
     @Override
     public void execute(Runnable command) {
-        EventExecutor executor = getEventExecutor();
+        Executor executor = getFastExecutor();
         Thread thread = VirtualThreadBuilder.buildVirtualThread(executor, command);
         thread.start();
     }
 
     public EventExecutor getEventExecutor() {
         return this.eventExecutor;
+    }
+
+    public Executor getFastExecutor() {
+        return this.fastExecutor;
     }
 
     public static class NettyPlatformEventExecutorProvider implements VirtualThreadExecutorProvider {
