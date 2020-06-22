@@ -1,4 +1,4 @@
-package org.appsugar.integration.projectloom.experimental.spring.web.embedded;
+package org.appsugar.integration.projectloom.experimental.spring.webflux.embedded;
 
 import java.util.concurrent.Executor;
 
