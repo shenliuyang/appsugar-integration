@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.appsugar.integration.projectloom.experimental.spring.web.embedded.VirtualThreadWebConfiguration,\
-org.appsugar.integration.projectloom.experimental.spring.webflux.embedded.VirtualThreadWebConfiguration
+org.appsugar.integration.projectloom.experimental.VirtualThreadConfiguration
