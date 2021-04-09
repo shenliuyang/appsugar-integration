@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
@@ -22,6 +23,7 @@ import java.sql.Connection;
 @SpringBootApplication
 @TestConfiguration
 @EnableJpaRepositories(repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class)
+@Import(PersonStatRepository.class)
 public class RepositoryTestConfiguration {
 
     private static final String BASE_PAT = "src/test/resources/data/";

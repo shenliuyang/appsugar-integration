@@ -17,6 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class PersonRepositoryTest extends BaseJpaRepositoryTest {
     @Autowired
     PersonRepository repository;
+    @Autowired
+    PersonStatRepository statRepository;
+
+    @Test
+    public void testFindPetsGreaterThan() {
+        val result = statRepository.findPetsGreaterThan(2);
+        logger.debug("testFindPetsGreaterThan result is {}", result);
+    }
 
     @Test
     public void testFindAndFetch() {

@@ -11,8 +11,8 @@ spring:
         order_updates: true
         jdbc:
           #config this when use oracle (default is 10)
-          fetch_size: 10000
-          batch_size: 10000
+          fetch_size: 1000
+          batch_size: 1000
   datasource:
     hikari:
       max-lifetime: 1800000

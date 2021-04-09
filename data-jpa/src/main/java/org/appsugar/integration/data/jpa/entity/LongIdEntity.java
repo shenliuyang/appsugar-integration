@@ -3,10 +3,7 @@ package org.appsugar.integration.data.jpa.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 /**
  * @author shenliuyang
@@ -20,6 +17,7 @@ public class LongIdEntity extends IdEntity<Long> {
     @Id
     @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @SequenceGenerator(name = "native", initialValue = 1, allocationSize = 1000)
     @Getter
     @Setter
     protected Long id;
