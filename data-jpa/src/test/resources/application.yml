@@ -1,0 +1,25 @@
+spring:
+  application.name: data-jpa
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        order_inserts: true
+        order_updates: true
+        jdbc:
+          #config this when use oracle (default is 10)
+          fetch_size: 10000
+          batch_size: 10000
+  datasource:
+    hikari:
+      max-lifetime: 1800000
+      idle-timeout: 60000
+      minimum-idle: 0
+      maximum-pool-size: 2
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:${spring.application.name}
+      username: sa
+      password:

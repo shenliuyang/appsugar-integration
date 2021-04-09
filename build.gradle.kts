@@ -1,14 +1,19 @@
 plugins {
-    val springBootVersion: String by System.getProperties()
-    val releasePluginVersion: String by System.getProperties()
+    val sysProps = System.getProperties()
+    val lombokVersion: String by sysProps
+    val springBootVersion: String by sysProps
+    val releasePluginVersion: String by sysProps
     id("net.researchgate.release") version releasePluginVersion
     id("org.springframework.boot") version springBootVersion
+    id("io.freefair.lombok") version lombokVersion
     idea
     java
+    `java-library`
 }
 
 allprojects {
     apply {
+        plugin("java-library")
         plugin("java")
         plugin("idea")
         plugin("org.springframework.boot")
@@ -20,7 +25,7 @@ allprojects {
     val repos = listOf("http://maven.aliyun.com/nexus/content/groups/public", "https://jcenter.bintray.com/", "https://repo.spring.io/milestone")
     repositories {
         mavenLocal()
-        repos.forEach(::maven)
+        repos.forEach { maven(it) }
     }
     dependencies {
         testImplementation("org.apache.ant:ant:1.10.1")
