@@ -7,6 +7,8 @@ import org.appsugar.integration.data.jpa.entity.PersonEntityGraph;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * @author shenliuyang
  * @version 1.0.0
@@ -19,6 +21,19 @@ public class PersonRepositoryTest extends BaseJpaRepositoryTest {
     PersonRepository repository;
     @Autowired
     PersonStatRepository statRepository;
+
+    @Test
+    public void testFindByPredicate() {
+        val predicate = statRepository.topredicate();
+        List<Person> result = (List<Person>) repository.findAll(predicate, PersonEntityGraph.____().pets().____.____());
+        logger.debug("testFindByPredicate result is {} pet size {}", result, result.get(0).getPets().size());
+    }
+
+    @Test
+    public void testFindPersonPetSize() {
+        val result = statRepository.findPersonPetSize();
+        logger.debug("testFindPersonPetSize result is {}", result);
+    }
 
     @Test
     public void testFindPetsGreaterThan() {

@@ -1,9 +1,14 @@
 package org.appsugar.integration.data.jpa.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.val;
 import org.appsugar.integration.data.jpa.entity.Person;
+import org.appsugar.integration.data.jpa.entity.PersonPetStatDTO;
 import org.appsugar.integration.data.jpa.entity.QPerson;
+import org.appsugar.integration.data.jpa.entity.QPet;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -35,6 +40,20 @@ public class PersonStatRepository {
     public List<Person> findPetsGreaterThan(Integer size) {
         val p = QPerson.person;
         return new JPAQuery<Person>(em).from(p).leftJoin(p.pets).groupBy(p.id).having(p.id.count().goe(size)).fetch();
+    }
+
+    public List<PersonPetStatDTO> findPersonPetSize() {
+        val p = QPerson.person;
+        val pet = QPet.pet;
+        return new JPAQuery<Person>(em).from(p).leftJoin(p.pets, pet).groupBy(p.id)
+                .select(Projections.bean(PersonPetStatDTO.class, p.id, p.name, pet.id.count().as("petSize"))).fetch();
+    }
+
+
+    public Predicate topredicate() {
+        val p = new BooleanBuilder();
+        p.and(QPerson.person.pets.any().name.eq("dog"));
+        return p;
     }
 
 }
