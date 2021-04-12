@@ -20,9 +20,9 @@ allprojects {
         plugin("io.spring.dependency-management")
     }
     configurations {
-        testCompile.get().extendsFrom(compileOnly.get())
+
     }
-    val repos = listOf("http://maven.aliyun.com/nexus/content/groups/public", "https://jcenter.bintray.com/", "https://repo.spring.io/milestone")
+    val repos = listOf("https://maven.aliyun.com/nexus/content/groups/public", "https://jcenter.bintray.com/", "https://repo.spring.io/milestone")
     repositories {
         mavenLocal()
         repos.forEach { maven(it) }
