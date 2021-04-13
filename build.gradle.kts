@@ -27,8 +27,8 @@ allprojects {
     }
     dependencies {
         compileOnly("org.projectlombok:lombok")
-        testImplementation("org.apache.ant:ant:1.10.1")
-        testImplementation("org.dbunit:dbunit:2.5.4")
+        testImplementation("ant:ant:1.7.0")
+        testImplementation("org.dbunit:dbunit:2.7.0")
         testImplementation("org.springframework.boot:spring-boot-starter-test") { exclude("junit") }
         testImplementation("org.junit.jupiter:junit-jupiter-api")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -47,12 +47,15 @@ allprojects {
             useJUnitPlatform()
             testLogging { showStandardStreams = true }
         }
+
     }
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(16))
+            languageVersion.set(JavaLanguageVersion.of(8))
+            vendor.set(JvmVendorSpec.ADOPTOPENJDK)
         }
     }
+
 }
 
 
