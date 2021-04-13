@@ -22,7 +22,7 @@ import java.util.Set;
 @DynamicUpdate
 @Getter
 @Setter
-public class Person extends AutoLongIdEntity {
+public class Person extends LongIdEntity {
     public static final String TABLE_NAME = "person";
     private Integer age;
     private String name;

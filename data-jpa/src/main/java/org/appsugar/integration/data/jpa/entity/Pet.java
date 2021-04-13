@@ -18,7 +18,7 @@ import javax.persistence.*;
 @DynamicUpdate
 @Getter
 @Setter
-public class Pet extends AutoLongIdEntity {
+public class Pet extends LongIdEntity {
     public static final String TABLE_NAME = "pet";
     private String name;
     private Integer age;

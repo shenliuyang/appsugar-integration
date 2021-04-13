@@ -6,6 +6,8 @@ spring:
       ddl-auto: update
     open-in-view: false
     properties:
+      snowflakeDataCenterId: 1
+      snowflakeWorkId: 21
       hibernate:
         order_inserts: true
         order_updates: true

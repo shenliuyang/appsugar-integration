@@ -2,8 +2,6 @@ package org.appsugar.integration.data.jpa.generator;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Properties;
-
 /**
  * @author shenliuyang
  * @version 1.0.0
@@ -13,10 +11,7 @@ import java.util.Properties;
  */
 @Slf4j
 public class SnowflakeIdWorker {
-    private static final String ENV_PREFIX = "appsugar.snowflake.";
-    public static final String ENV_WORK_ID = ENV_PREFIX + "workId";
-    public static final String ENV_DATACENTER_ID = ENV_PREFIX + "dataCenterId";
-    public static final SnowflakeIdWorker INSTANCE = new SnowflakeIdWorker();
+   
     /**
      * 开始时间截 (2015-01-01)
      */
@@ -74,23 +69,6 @@ public class SnowflakeIdWorker {
      */
     private long lastTimestamp = -1L;
 
-    /**
-     * 从系统环境变量中获取workid与datacenterid
-     *
-     * @param
-     * @return
-     * @throws
-     * @method SnowflakeIdWorker
-     * @author shenliuyang
-     * @date 2021/4/12 21:02
-     */
-    public SnowflakeIdWorker() {
-        Properties p = new Properties(System.getProperties());
-        p.putAll(System.getenv());
-        this.workerId = Integer.parseInt(p.getProperty(ENV_WORK_ID, "0"));
-        this.datacenterId = Integer.parseInt(p.getProperty(ENV_DATACENTER_ID, "0"));
-        log.info("load snowFlakeId from system property and env  workId is {} dataCenterId is {}", workerId, datacenterId);
-    }
 
     /**
      * 构造函数
