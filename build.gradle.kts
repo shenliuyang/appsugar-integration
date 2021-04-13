@@ -18,9 +18,7 @@ allprojects {
         plugin("idea")
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
-    }
-    configurations {
-
+        plugin("io.freefair.lombok")
     }
     val repos = listOf("https://maven.aliyun.com/nexus/content/groups/public", "https://jcenter.bintray.com/", "https://repo.spring.io/milestone")
     repositories {
@@ -28,6 +26,7 @@ allprojects {
         repos.forEach { maven(it) }
     }
     dependencies {
+        compileOnly("org.projectlombok:lombok")
         testImplementation("org.apache.ant:ant:1.10.1")
         testImplementation("org.dbunit:dbunit:2.5.4")
         testImplementation("org.springframework.boot:spring-boot-starter-test") { exclude("junit") }
@@ -42,12 +41,16 @@ allprojects {
         }
     }
     tasks {
-        java { sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8 }
         bootJar { enabled = false }
         test {
             failFast = true
             useJUnitPlatform()
             testLogging { showStandardStreams = true }
+        }
+    }
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(16))
         }
     }
 }
