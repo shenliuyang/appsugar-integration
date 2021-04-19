@@ -1,4 +1,7 @@
 val entityGraphVersion = "2.4.2"
+configurations {
+    testAnnotationProcessor.get().extendsFrom(annotationProcessor.get())
+}
 dependencies {
     val managedVersions = dependencyManagement.managedVersions
     val querydslVersion = managedVersions["com.querydsl:querydsl-jpa"]
