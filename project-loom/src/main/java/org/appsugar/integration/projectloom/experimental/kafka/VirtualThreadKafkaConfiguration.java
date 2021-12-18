@@ -1,6 +1,5 @@
 package org.appsugar.integration.projectloom.experimental.kafka;
 
-import jdk.internal.misc.VirtualThreads;
 import org.appsugar.integration.projectloom.experimental.VirtualThreadConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -20,7 +19,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 @ConditionalOnBean(ConcurrentKafkaListenerContainerFactoryConfigurer.class)
-@ConditionalOnClass({EnableWebFlux.class, VirtualThreads.class})
+@ConditionalOnClass(value = {EnableWebFlux.class}, name = {"jdk.internal.misc.VirtualThreads"})
 @Configuration(proxyBeanMethods = false)
 public class VirtualThreadKafkaConfiguration {
 

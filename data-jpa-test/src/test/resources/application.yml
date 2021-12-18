@@ -1,0 +1,9 @@
+dbunit:
+  enabled: true
+  sampleDir: src/test/resources/data/
+  operationType: CLEAN_INSERT
+  sample-files:
+    - sample-data.xml
+    - sample-data2.xml
+  dataTypeFactoryClass: org.dbunit.ext.h2.H2DataTypeFactory
+  metadataHandlerClass: org.dbunit.database.DefaultMetadataHandler

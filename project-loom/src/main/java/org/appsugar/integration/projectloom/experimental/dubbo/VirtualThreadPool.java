@@ -12,6 +12,6 @@ import java.util.concurrent.Executors;
 public class VirtualThreadPool implements ThreadPool {
     @Override
     public Executor getExecutor(URL url) {
-        return Executors.newUnboundedVirtualThreadExecutor();
+        return Executors.newVirtualThreadExecutor();
     }
 }

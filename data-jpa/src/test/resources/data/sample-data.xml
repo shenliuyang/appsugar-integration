@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-    <person id="-1" name="liuyang" age="30" address="hunan"/>
-    <pet id="-1" name="cat" age="7" person_id="-1"/>
-    <pet id="-2" name="dog" age="12" person_id="-1"/>
-</dataset>
