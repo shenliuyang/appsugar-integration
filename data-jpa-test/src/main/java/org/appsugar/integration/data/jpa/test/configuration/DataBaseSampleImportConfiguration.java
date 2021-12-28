@@ -2,7 +2,9 @@ package org.appsugar.integration.data.jpa.test.configuration;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.ant.Operation;
 import org.dbunit.database.*;
@@ -19,9 +21,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.File;
 import java.sql.Connection;
@@ -45,17 +48,33 @@ import java.util.List;
  * @date 2021-12-18  15:21
  */
 @Configuration
-@EnableConfigurationProperties({DataBaseSampleImportConfiguration.DbunitConfig.class})
+@EnableConfigurationProperties({DataBaseSampleImportConfiguration.DbunitConfigs.class})
 @AutoConfigureAfter(JpaRepositoriesAutoConfiguration.class)
-@ConditionalOnProperty(name = "dbunit.enabled", matchIfMissing = true, havingValue = "true")
+@ConditionalOnProperty(name = "dbunit.enabled", havingValue = "true")
 public class DataBaseSampleImportConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(DataBaseSampleImportConfiguration.class);
 
-    @Lazy(false)
     @Autowired
+    private DbunitConfigs dbunitConfigs;
+    @Autowired
+    private ApplicationContext ctx;
+
+    @PostConstruct
     @SneakyThrows
-    public void configure(DataSource dataSource, DbunitConfig dbunitConfig) {
+    public void postConstruct() {
+        if (dbunitConfigs.configs.isEmpty()) {
+            logger.info("use single dbunit config");
+            configure(ctx, dbunitConfigs);
+        } else {
+            logger.info("use multiple dbunit config");
+            dbunitConfigs.configs.forEach(it -> configure(ctx, it));
+        }
+    }
+
+    @SneakyThrows
+    public void configure(ApplicationContext ctx, DbunitConfig dbunitConfig) {
         logger.info("start to import test db config is {}", dbunitConfig);
+        DataSource dataSource = ctx.getBean(dbunitConfig.dataSourceBeanName, DataSource.class);
         Connection con = dataSource.getConnection();
         DatabaseConnection connection = new DatabaseConnection(con);
         DatabaseConfig config = connection.getConfig();
@@ -75,20 +94,30 @@ public class DataBaseSampleImportConfiguration {
             }
         };
         operation.setTransaction(true);
-        operation.setType("INSERT");
-        operation.setFormat("flat");
+        operation.setType(dbunitConfig.operationType);
+        operation.setFormat(dbunitConfig.operationFormat);
         operation.execute(connection);
         connection.close();
         logger.info("success to import test db");
     }
 
-    @ConfigurationProperties("dbunit")
+
     @Data
     public static class DbunitConfig {
+        private String dataSourceBeanName = "dataSource";
         private String sampleDir = "src/test/resources/data/";
         private List<String> sampleFiles = Lists.newArrayList("sample-data.xml");
         private String operationType = "CLEAN_INSERT";
+        private String operationFormat = "flat";
         private Class<? extends IDataTypeFactory> dataTypeFactoryClass = H2DataTypeFactory.class;
         private Class<? extends IMetadataHandler> metadataHandlerClass = DefaultMetadataHandler.class;
+    }
+
+    @Data
+    @ConfigurationProperties("dbunit")
+    @EqualsAndHashCode(callSuper = true)
+    @ToString(callSuper = true)
+    public static class DbunitConfigs extends DbunitConfig {
+        private final List<DbunitConfig> configs = Lists.newArrayList();
     }
 }

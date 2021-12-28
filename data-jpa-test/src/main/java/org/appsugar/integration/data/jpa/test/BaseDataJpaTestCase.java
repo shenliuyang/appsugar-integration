@@ -22,6 +22,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DataJpaTest(showSql = true)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(DataBaseSampleImportConfiguration.class)
-public abstract class BaseDataJpaTestcase {
+public abstract class BaseDataJpaTestCase {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 }

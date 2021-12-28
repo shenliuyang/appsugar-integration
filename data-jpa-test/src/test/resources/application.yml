@@ -1,9 +1,28 @@
+spring:
+  db:
+    name: data-jpa-test
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:
+    hikari:
+      max-lifetime: 1800000
+      idle-timeout: 60000
+      minimum-idle: 0
+      maximum-pool-size: 64
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:~/tmp/${spring.db.name}
+      username: sa
+      password:
+
 dbunit:
   enabled: true
-  sampleDir: src/test/resources/data/
-  operationType: CLEAN_INSERT
+  data-source-bean-name: dataSource
+  sample-dir: src/test/resources/data/
+  operation-type: CLEAN_INSERT
   sample-files:
     - sample-data.xml
     - sample-data2.xml
-  dataTypeFactoryClass: org.dbunit.ext.h2.H2DataTypeFactory
-  metadataHandlerClass: org.dbunit.database.DefaultMetadataHandler
+  data-type-factory-class: org.dbunit.ext.h2.H2DataTypeFactory
+  metadata-handler-class: org.dbunit.database.DefaultMetadataHandler

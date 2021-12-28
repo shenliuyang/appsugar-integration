@@ -26,7 +26,7 @@ import java.util.List;
 public class RedisConfiguration {
     @Bean
     public RedisScript<List<Integer>> checkValuePresentScript() {
-        ResourceScriptSource scriptSource = new ResourceScriptSource(new ClassPathResource("META-INF/scripts/check_value_present.lua"));
+        ResourceScriptSource scriptSource = new ResourceScriptSource(new ClassPathResource("check_value_present.lua"));
         RedisScript script = RedisScript.of(scriptSource.getResource(), List.class);
         return script;
     }
@@ -42,7 +42,7 @@ public class RedisConfiguration {
         return template;
     }
 
-    public static enum ByteArrayRedisSerializer implements RedisSerializer<byte[]> {
+    public enum ByteArrayRedisSerializer implements RedisSerializer<byte[]> {
 
         INSTANCE;
 

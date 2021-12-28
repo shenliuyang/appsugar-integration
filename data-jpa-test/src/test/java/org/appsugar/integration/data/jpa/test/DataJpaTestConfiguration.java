@@ -1,5 +1,6 @@
 package org.appsugar.integration.data.jpa.test;
 
+import com.cosium.spring.data.jpa.entity.graph.repository.support.EntityGraphJpaRepositoryFactoryBean;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,6 +16,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackageClasses = TestEntity.class)
 @SpringBootApplication
 @TestConfiguration
-@EnableJpaRepositories
+@EnableJpaRepositories(repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class)
 public class DataJpaTestConfiguration {
 }

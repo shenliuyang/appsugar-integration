@@ -1,0 +1,1 @@
+package org.appsugar.integration.data.jpa;

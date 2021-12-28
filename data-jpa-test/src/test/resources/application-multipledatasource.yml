@@ -1,0 +1,11 @@
+dbunit:
+  enabled: true
+  configs:
+    - data-source-bean-name: dataSource
+      sample-dir: src/test/resources/data/
+      operation-type: CLEAN_INSERT
+      sample-files:
+        - sample-data.xml
+        - sample-data2.xml
+      data-type-factory-class: org.dbunit.ext.h2.H2DataTypeFactory
+      metadata-handler-class: org.dbunit.database.DefaultMetadataHandler

@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @className ImportTest
  * @date 2021-12-18  16:31
  */
-
-public class ImportTest extends BaseDataJpaTestcase {
+public class ImportTest extends BaseDataJpaTestCase {
     @Autowired
     private TestEntityRepository repository;
 
