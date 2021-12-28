@@ -23,7 +23,11 @@ allprojects {
         plugin("io.freefair.lombok")
         plugin("maven-publish")
     }
-
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of("8")) // "8"
+        }
+    }
     val repos = listOf("https://maven.aliyun.com/nexus/content/groups/public", "https://jcenter.bintray.com/")
     repositories {
         mavenLocal()
@@ -64,7 +68,8 @@ allprojects {
         withSourcesJar()
     }
 }
-fun DependencyHandler.`apiWithVersion`(dependencyNotation: String) = api(dependencyNotation + ":" + dependencyManagement.managedVersions[dependencyNotation])
+fun DependencyHandler.`apiWithVersion`(dependencyNotation: String) =
+    api(dependencyNotation + ":" + dependencyManagement.managedVersions[dependencyNotation])
 
 project(":data-jpa") {
 
@@ -96,7 +101,6 @@ project(":data-jpa-test") {
         api("org.apache.ant:ant:1.10.12")
         api("org.dbunit:dbunit:2.7.2")
         api("com.google.guava:guava:31.0.1-jre")
-        api("com.playtika.testcontainers:embedded-mysql")
     }
 }
 
