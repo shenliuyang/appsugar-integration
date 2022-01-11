@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @className StringSetConverter
  * @date 2021-12-20  17:00
  */
-@Converter(autoApply = true)
+@Converter
 public class StringSetConverter implements AttributeConverter<Set<String>, String> {
     @Override
     public String convertToDatabaseColumn(Set<String> attribute) {

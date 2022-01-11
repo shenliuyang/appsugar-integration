@@ -119,6 +119,76 @@ public class DataBaseSampleImportConfiguration {
         private String operationFormat = "flat";
         private Class<? extends IDataTypeFactory> dataTypeFactoryClass = H2DataTypeFactory.class;
         private Class<? extends IMetadataHandler> metadataHandlerClass = DefaultMetadataHandler.class;
+
+        public String getDataSourceBeanName() {
+            return dataSourceBeanName;
+        }
+
+        public void setDataSourceBeanName(String dataSourceBeanName) {
+            this.dataSourceBeanName = dataSourceBeanName;
+        }
+
+        public String getSampleDir() {
+            return sampleDir;
+        }
+
+        public void setSampleDir(String sampleDir) {
+            this.sampleDir = sampleDir;
+        }
+
+        public List<String> getSampleFiles() {
+            return sampleFiles;
+        }
+
+        public void setSampleFiles(List<String> sampleFiles) {
+            this.sampleFiles = sampleFiles;
+        }
+
+        public String getOperationType() {
+            return operationType;
+        }
+
+        public void setOperationType(String operationType) {
+            this.operationType = operationType;
+        }
+
+        public String getOperationFormat() {
+            return operationFormat;
+        }
+
+        public void setOperationFormat(String operationFormat) {
+            this.operationFormat = operationFormat;
+        }
+
+        public Class<? extends IDataTypeFactory> getDataTypeFactoryClass() {
+            return dataTypeFactoryClass;
+        }
+
+        public void setDataTypeFactoryClass(Class<? extends IDataTypeFactory> dataTypeFactoryClass) {
+            this.dataTypeFactoryClass = dataTypeFactoryClass;
+        }
+
+        public Class<? extends IMetadataHandler> getMetadataHandlerClass() {
+            return metadataHandlerClass;
+        }
+
+        public void setMetadataHandlerClass(Class<? extends IMetadataHandler> metadataHandlerClass) {
+            this.metadataHandlerClass = metadataHandlerClass;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("DbunitConfig{");
+            sb.append("dataSourceBeanName='").append(dataSourceBeanName).append('\'');
+            sb.append(", sampleDir='").append(sampleDir).append('\'');
+            sb.append(", sampleFiles=").append(sampleFiles);
+            sb.append(", operationType='").append(operationType).append('\'');
+            sb.append(", operationFormat='").append(operationFormat).append('\'');
+            sb.append(", dataTypeFactoryClass=").append(dataTypeFactoryClass);
+            sb.append(", metadataHandlerClass=").append(metadataHandlerClass);
+            sb.append('}');
+            return sb.toString();
+        }
     }
 
     @Data
@@ -126,6 +196,22 @@ public class DataBaseSampleImportConfiguration {
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)
     public static class DbunitConfigs extends DbunitConfig {
-        private final List<DbunitConfig> configs = Lists.newArrayList();
+        private List<DbunitConfig> configs = Lists.newArrayList();
+
+        public List<DbunitConfig> getConfigs() {
+            return configs;
+        }
+
+        public void setConfigs(List<DbunitConfig> configs) {
+            this.configs = configs;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("DbunitConfigs{");
+            sb.append("configs=").append(configs);
+            sb.append('}');
+            return sb.toString();
+        }
     }
 }
