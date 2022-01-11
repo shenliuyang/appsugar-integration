@@ -4,18 +4,26 @@ plugins {
     val springBootVersion: String by sysProps
     val releasePluginVersion: String by sysProps
     val dependencyManagement: String by sysProps
+    val kotlinVersion: String by sysProps
     id("net.researchgate.release") version releasePluginVersion
     id("org.springframework.boot") version springBootVersion
     id("io.spring.dependency-management") version dependencyManagement
     id("io.freefair.lombok") version lombokVersion
-    java
-    `java-library`
+    kotlin("plugin.lombok") version kotlinVersion
+    kotlin("jvm") version kotlinVersion
+    kotlin("kapt") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.jpa") version kotlinVersion
     `maven-publish`
 }
 
 
 allprojects {
     apply {
+        plugin("org.jetbrains.kotlin.jvm")
+        plugin("org.jetbrains.kotlin.kapt")
+        plugin("org.jetbrains.kotlin.plugin.spring")
+        plugin("org.jetbrains.kotlin.plugin.jpa")
         plugin("java")
         plugin("java-library")
         plugin("org.springframework.boot")
@@ -25,7 +33,7 @@ allprojects {
     }
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of("8")) // "8"
+            //languageVersion.set(JavaLanguageVersion.of("8")) // "8"
         }
     }
     val repos = listOf("https://maven.aliyun.com/nexus/content/groups/public", "https://jcenter.bintray.com/")
@@ -36,13 +44,12 @@ allprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                from(components["java"])
+                from(components["kotlin"])
             }
         }
     }
 
     dependencies {
-
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 
@@ -72,7 +79,6 @@ fun DependencyHandler.`apiWithVersion`(dependencyNotation: String) =
     api(dependencyNotation + ":" + dependencyManagement.managedVersions[dependencyNotation])
 
 project(":data-jpa") {
-
     dependencies {
         val entityGraphVersion = "2.5.0"
         val versions = dependencyManagement.importedProperties
@@ -81,12 +87,12 @@ project(":data-jpa") {
         apiWithVersion("org.apache.commons:commons-lang3")
         api("com.cosium.spring.data:spring-data-jpa-entity-graph:$entityGraphVersion")
 
-        annotationProcessor("com.querydsl:querydsl-apt:${versions["querydsl.version"]}:jpa")
-        annotationProcessor("javax.annotation:javax.annotation-api")
-        annotationProcessor("javax.persistence:javax.persistence-api")
+        kapt("com.querydsl:querydsl-apt:${versions["querydsl.version"]}:jpa")
+        kapt("javax.annotation:javax.annotation-api")
+        kapt("javax.persistence:javax.persistence-api")
 
-        annotationProcessor("org.hibernate:hibernate-jpamodelgen")
-        annotationProcessor("com.cosium.spring.data:spring-data-jpa-entity-graph-generator:$entityGraphVersion")
+        kapt("org.hibernate:hibernate-jpamodelgen")
+        kapt("com.cosium.spring.data:spring-data-jpa-entity-graph-generator:$entityGraphVersion")
     }
 }
 

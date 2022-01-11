@@ -3,7 +3,6 @@ package org.appsugar.integration.data.jpa.test.configuration;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.ant.Operation;
@@ -60,19 +59,28 @@ public class DataBaseSampleImportConfiguration {
     private ApplicationContext ctx;
 
     @PostConstruct
-    @SneakyThrows
     public void postConstruct() {
         if (dbunitConfigs.configs.isEmpty()) {
             logger.info("use single dbunit config");
-            configure(ctx, dbunitConfigs);
+            try {
+                configure(ctx, dbunitConfigs);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         } else {
             logger.info("use multiple dbunit config");
-            dbunitConfigs.configs.forEach(it -> configure(ctx, it));
+            dbunitConfigs.configs.forEach(it -> {
+                try {
+                    configure(ctx, it);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
     }
 
-    @SneakyThrows
-    public void configure(ApplicationContext ctx, DbunitConfig dbunitConfig) {
+
+    public void configure(ApplicationContext ctx, DbunitConfig dbunitConfig) throws Exception {
         logger.info("start to import test db config is {}", dbunitConfig);
         DataSource dataSource = ctx.getBean(dbunitConfig.dataSourceBeanName, DataSource.class);
         Connection con = dataSource.getConnection();
