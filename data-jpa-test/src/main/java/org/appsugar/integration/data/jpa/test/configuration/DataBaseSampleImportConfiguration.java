@@ -3,7 +3,6 @@ package org.appsugar.integration.data.jpa.test.configuration;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.ant.Operation;
 import org.dbunit.database.*;
@@ -112,13 +111,13 @@ public class DataBaseSampleImportConfiguration {
 
     @Data
     public static class DbunitConfig {
-        private String dataSourceBeanName = "dataSource";
-        private String sampleDir = "src/test/resources/data/";
-        private List<String> sampleFiles = Lists.newArrayList("sample-data.xml");
-        private String operationType = "CLEAN_INSERT";
-        private String operationFormat = "flat";
-        private Class<? extends IDataTypeFactory> dataTypeFactoryClass = H2DataTypeFactory.class;
-        private Class<? extends IMetadataHandler> metadataHandlerClass = DefaultMetadataHandler.class;
+        protected String dataSourceBeanName = "dataSource";
+        protected String sampleDir = "src/test/resources/data/";
+        protected List<String> sampleFiles = Lists.newArrayList("sample-data.xml");
+        protected String operationType = "CLEAN_INSERT";
+        protected String operationFormat = "flat";
+        protected Class<? extends IDataTypeFactory> dataTypeFactoryClass = H2DataTypeFactory.class;
+        protected Class<? extends IMetadataHandler> metadataHandlerClass = DefaultMetadataHandler.class;
 
         public String getDataSourceBeanName() {
             return dataSourceBeanName;
@@ -194,7 +193,6 @@ public class DataBaseSampleImportConfiguration {
     @Data
     @ConfigurationProperties("dbunit")
     @EqualsAndHashCode(callSuper = true)
-    @ToString(callSuper = true)
     public static class DbunitConfigs extends DbunitConfig {
         private List<DbunitConfig> configs = Lists.newArrayList();
 
@@ -209,7 +207,14 @@ public class DataBaseSampleImportConfiguration {
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder("DbunitConfigs{");
-            sb.append("configs=").append(configs);
+            sb.append("dataSourceBeanName='").append(dataSourceBeanName).append('\'');
+            sb.append(", sampleDir='").append(sampleDir).append('\'');
+            sb.append(", sampleFiles=").append(sampleFiles);
+            sb.append(", operationType='").append(operationType).append('\'');
+            sb.append(", operationFormat='").append(operationFormat).append('\'');
+            sb.append(", dataTypeFactoryClass=").append(dataTypeFactoryClass);
+            sb.append(", metadataHandlerClass=").append(metadataHandlerClass);
+            sb.append(", configs=").append(configs);
             sb.append('}');
             return sb.toString();
         }
