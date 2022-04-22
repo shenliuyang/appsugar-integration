@@ -1,6 +1,7 @@
 package org.appsugar.integration.data.jpa.entity;
 
-import org.jetbrains.annotations.Nullable;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
@@ -13,39 +14,38 @@ import java.util.Date;
  * @date 2022-01-12  15:51
  */
 @MappedSuperclass
-public abstract class AbstractIdEntity extends IdEntity {
-    private long id;
-    private Date createdAt;
-    private Date updatedAt;
+public abstract class AbstractIdEntity {
+    protected Long id;
+    @CreatedDate
+    protected Date createdAt;
+    @LastModifiedDate
+    protected Date updatedAt;
 
-    @Override
-    public long getId() {
+
+    public Long getId() {
         return id;
     }
 
-    @Override
-    public void setId(long id) {
+
+    public void setId(Long id) {
         this.id = id;
     }
 
-    @Nullable
-    @Override
     public Date getCreatedAt() {
         return createdAt;
     }
 
-    @Override
+
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    @Nullable
-    @Override
+
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    @Override
+
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }

@@ -3,13 +3,10 @@ package org.appsugar.integration.data.jpa.test.configuration;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.dbunit.DatabaseUnitException;
+import lombok.SneakyThrows;
 import org.dbunit.ant.Operation;
 import org.dbunit.database.*;
-import org.dbunit.dataset.CompositeDataSet;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +23,6 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,23 +54,18 @@ public class DataBaseSampleImportConfiguration {
     private ApplicationContext ctx;
 
     @PostConstruct
+    @SneakyThrows
     public void postConstruct() {
         if (dbunitConfigs.configs.isEmpty()) {
             logger.info("use single dbunit config");
-            try {
-                configure(ctx, dbunitConfigs);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
+
+            configure(ctx, dbunitConfigs);
+
         } else {
             logger.info("use multiple dbunit config");
-            dbunitConfigs.configs.forEach(it -> {
-                try {
-                    configure(ctx, it);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
+            for (DbunitConfig config : dbunitConfigs.configs) {
+                configure(ctx, config);
+            }
         }
     }
 
@@ -89,17 +80,8 @@ public class DataBaseSampleImportConfiguration {
         config.setProperty(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES, false);
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dbunitConfig.dataTypeFactoryClass.getConstructor().newInstance());
         config.setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, dbunitConfig.metadataHandlerClass.getConstructor().newInstance());
-        List<IDataSet> iDataSets = new ArrayList<>();
-        for (String fileName : dbunitConfig.sampleFiles) {
-            iDataSets.add(new FlatXmlDataSetBuilder().build(new File(dbunitConfig.sampleDir + fileName)));
-        }
-        Operation operation = new Operation() {
-            @Override
-            protected IDataSet getSrcDataSet(File src, String format, boolean forwardOnly) throws DatabaseUnitException {
-                IDataSet[] sets = iDataSets.stream().toArray(it -> new IDataSet[it]);
-                return new CompositeDataSet(sets);
-            }
-        };
+        Operation operation = new Operation();
+        operation.setSrc(dbunitConfig.sampleFiles.stream().map(it -> new File(dbunitConfig.sampleDir + it)).toArray(File[]::new));
         operation.setTransaction(true);
         operation.setType(dbunitConfig.operationType);
         operation.setFormat(dbunitConfig.operationFormat);
